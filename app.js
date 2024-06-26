@@ -30,10 +30,10 @@ app.post('/updateBalance', async (req, res) => {
     const { userId, amount } = req.body;
     try {
         const result = await sequelize.transaction(async (t) => {
-            const user = await User.findByPk(userId, { transaction: t });
-            if (!user) {
-                throw new Error('User not found');
-            }
+            const user = await User.findByPk(userId, {
+                transaction: t,
+                lock: t.LOCK.UPDATE
+            });
             if (user.balance + amount < 0) {
                 throw new Error('Insufficient funds');
             }
