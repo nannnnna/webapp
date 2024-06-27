@@ -2,10 +2,14 @@ For install dependences:
 
     npm install 
 
-For create migration: 
+Create and write .env: 
 
-    node migrate.js 
+    DB_USERNAME=
+    DB_PASSWORD=
+    DB_HOST=
+    DB_PORT=
+    DB_NAME=
 
 For run app: 
 
-    node app.js 
+    npm start
