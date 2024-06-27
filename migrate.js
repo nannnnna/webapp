@@ -1,13 +1,6 @@
 require('dotenv').config();
-const Sequelize = require('sequelize');
 const Umzug = require('umzug');
-
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
-    port: process.env.DB_PORT,
-    logging: false
-});
+const sequelize = require('./db'); // Import the sequelize instance
 
 const umzug = new Umzug({
     storage: 'sequelize',
@@ -19,7 +12,7 @@ const umzug = new Umzug({
         pattern: /\.js$/,
         params: [
             sequelize.getQueryInterface(),
-            Sequelize
+            sequelize.constructor
         ]
     },
     logging: function() {

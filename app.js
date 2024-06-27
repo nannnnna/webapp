@@ -1,28 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('./db');
+const User = require('./models/user');
+const balanceRouter = require('./controllers/balanceController');
+const errorHandlingMiddleware = require('./middlewares/errorHandling');
 const { runMigrations } = require('./migrate');
 const app = express();
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
-    logging: false,
-    port: process.env.DB_PORT
-});
-app.use(bodyParser.json());
 
-const User = sequelize.define('user', {
-    balance: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: 0
-        }
-    }
-}, {
-    timestamps: false
-});
+app.use(bodyParser.json());
+app.use('/balance', balanceRouter);
+app.use(errorHandlingMiddleware);
 
 async function startApp() {
     try {
@@ -40,28 +28,11 @@ async function startApp() {
         });
     } catch (error) {
         console.error('Failed to start the application:', error);
+        process.exit(1); // Optionally exit process with an error code
     }
 }
 
-app.post('/updateBalance', async (req, res) => {
-    const { userId, amount } = req.body;
-    try {
-        const result = await sequelize.transaction(async (t) => {
-            const user = await User.findByPk(userId, {
-                transaction: t,
-                lock: t.LOCK.UPDATE
-            });
-            if (user.balance + amount < 0) {
-                throw new Error('Insufficient funds');
-            }
-            user.balance += amount;
-            await user.save({ transaction: t });
-            return user.balance;
-        });
-        res.send({ newBalance: result });
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
+startApp().catch(error => {
+    console.error('Failed to start the application due to an unhandled error:', error);
+    process.exit(1); // Optionally exit process with an error code
 });
-
-startApp();
