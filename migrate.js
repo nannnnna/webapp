@@ -23,12 +23,14 @@ const umzug = new Umzug({
     },
 });
 
-function runMigrations() {
-    umzug.up().then(() => {
+async function runMigrations() {
+    try {
+        await umzug.up();
         console.log('Migrations have been successfully executed!');
-    }).catch(error => {
+    } catch (error) {
         console.error('Migration failed. Error:', error);
-    });
+        throw error;
+    }
 }
 
-runMigrations();
+module.exports = { runMigrations };

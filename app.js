@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Sequelize, DataTypes } = require('sequelize');
-
+const { runMigrations } = require('./migrate');
 const app = express();
 const sequelize = new Sequelize('postgres://postgres:postgres@localhost:5432/simple_webapp', { logging: false });
 app.use(bodyParser.json());
@@ -18,13 +18,24 @@ const User = sequelize.define('user', {
     timestamps: false
 });
 
-sequelize.sync().then(() => {
-    User.findOrCreate({
-        where: {id: 1},
-        defaults: {balance: 10000}
-    });
-    console.log("Database synced");
-});
+async function startApp() {
+    try {
+        await runMigrations();
+        await sequelize.sync();
+        await User.findOrCreate({
+            where: { id: 1 },
+            defaults: { balance: 10000 }
+        });
+        console.log("Database synced and user initialized");
+
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to start the application:', error);
+    }
+}
 
 app.post('/updateBalance', async (req, res) => {
     const { userId, amount } = req.body;
@@ -47,7 +58,4 @@ app.post('/updateBalance', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+startApp();
