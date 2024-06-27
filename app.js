@@ -28,11 +28,11 @@ async function startApp() {
         });
     } catch (error) {
         console.error('Failed to start the application:', error);
-        process.exit(1); // Optionally exit process with an error code
+        process.exit(1);
     }
 }
 
 startApp().catch(error => {
     console.error('Failed to start the application due to an unhandled error:', error);
-    process.exit(1); // Optionally exit process with an error code
+    process.exit(1);
 });

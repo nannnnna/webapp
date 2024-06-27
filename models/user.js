@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Убедитесь, что путь правильный
+const sequelize = require('../db');  // Убедитесь, что путь правильный
 
 const User = sequelize.define('User', {
     id: {
@@ -10,12 +10,10 @@ const User = sequelize.define('User', {
     balance: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-            min: 0
-        }
+        validate: { min: 0 }
     }
 }, {
-    tableName: 'users', // Указываем имя таблицы, если оно отличается от имени модели
+    tableName: 'users',
     timestamps: false
 });
 

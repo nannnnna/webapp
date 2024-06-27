@@ -1,6 +1,6 @@
 require('dotenv').config();
 const Umzug = require('umzug');
-const sequelize = require('./db'); // Import the sequelize instance
+const sequelize = require('./db');
 
 const umzug = new Umzug({
     storage: 'sequelize',
