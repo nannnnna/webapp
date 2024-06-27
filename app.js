@@ -5,6 +5,7 @@ const sequelize = require('./db');
 const User = require('./models/user');
 const balanceRouter = require('./controllers/balanceController');
 const errorHandlingMiddleware = require('./middlewares/errorHandling');
+const { AppError } = require('./utils/errorHandler');
 const { runMigrations } = require('./migrate');
 const app = express();
 

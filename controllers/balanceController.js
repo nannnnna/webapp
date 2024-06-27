@@ -4,13 +4,13 @@ const validateBalanceUpdate = require('../validators/balanceValidator');
 
 const router = express.Router();
 
-router.post('/update', validateBalanceUpdate, async (req, res) => {
+router.post('/update', validateBalanceUpdate, async (req, res, next) => {
     try {
         const { userId, amount } = req.body;
         const newBalance = await balanceService.updateBalance(userId, amount);
         res.send({ newBalance });
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 });
 
