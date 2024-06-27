@@ -1,9 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Sequelize, DataTypes } = require('sequelize');
 const { runMigrations } = require('./migrate');
 const app = express();
-const sequelize = new Sequelize('postgres://postgres:postgres@localhost:5432/simple_webapp', { logging: false });
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: 'postgres',
+    logging: false,
+    port: process.env.DB_PORT
+});
 app.use(bodyParser.json());
 
 const User = sequelize.define('user', {
