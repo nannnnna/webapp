@@ -1,4 +1,3 @@
-// somewhere in your service or controller
 const sequelize = require('../db');
 const User = require('../models/user');
 const { Op } = require('sequelize');
